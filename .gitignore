@@ -1,2 +1,11 @@
 # Visual Studio
 .vs/
+
+# ISOファイルを除外
+*.iso
+
+# VMwareメモリダンプ
+*.vmem
+
+# VMware仮想ディスク
+*.vmdk
