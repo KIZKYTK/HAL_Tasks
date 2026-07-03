@@ -156,39 +156,69 @@ void Decompress(FILE* CompressFile)
 unsigned int Encode(unsigned char* OriginalData, unsigned int OriginalSize, unsigned char* CompressData)
 {
 	//ランレングスで圧縮
-	unsigned char byte, nextByte;
-	unsigned char count;
-	unsigned int compressSize;
+	unsigned int i = 0;
+	unsigned int compressSize = 0;
 
-	compressSize = 0;
-
-	byte = OriginalData[0];
-	count = 0;
-
-	for (unsigned int i = 1; i < OriginalSize; i++)
+	while (i < OriginalSize)
 	{
-		nextByte = OriginalData[i];
+		unsigned char current = OriginalData[i];
 
-		if (byte == nextByte && count < 255)
+		// 連続数を数える
+		unsigned int count = 1;
+		while (i + count < OriginalSize &&
+			OriginalData[i + count] == current &&
+			count < 255)
 		{
 			count++;
 		}
+
+		// 「圧縮する価値があるか」で分岐
+		if (count >= 3)
+		{
+			// RLE圧縮
+			CompressData[compressSize++] = 1;      // type = RLE
+			CompressData[compressSize++] = current;
+			CompressData[compressSize++] = count;
+		}
 		else
 		{
-			CompressData[compressSize] = byte;
-			compressSize++;
-			CompressData[compressSize] = count;
-			compressSize++;
+			// RAWモード（圧縮しない）
+			unsigned int start = i;
+			unsigned int rawCount = 0;
 
-			byte = nextByte;
-			count = 0;
+			while (i < OriginalSize)
+			{
+				unsigned char next = OriginalData[i];
+
+				// ここでRLEに切り替え条件
+				if (i + 2 < OriginalSize)
+				{
+					unsigned char n1 = OriginalData[i + 1];
+					unsigned char n2 = OriginalData[i + 2];
+					if (next == n1 && n1 == n2)
+						break;
+				}
+
+				i++;
+				rawCount++;
+
+				if (rawCount >= 255)
+					break;
+			}
+
+			CompressData[compressSize++] = 0; // type = RAW
+			CompressData[compressSize++] = (unsigned char)rawCount;
+
+			for (unsigned int k = 0; k < rawCount; k++)
+			{
+				CompressData[compressSize++] = OriginalData[start + k];
+			}
+
+			continue;
 		}
-	}
 
-	CompressData[compressSize] = byte;
-	compressSize++;
-	CompressData[compressSize] = count;
-	compressSize++;
+		i += count;
+	}
 
 	return compressSize;
 }
@@ -200,26 +230,31 @@ unsigned int Encode(unsigned char* OriginalData, unsigned int OriginalSize, unsi
 unsigned int Decode(unsigned char* CompressData, unsigned int CompressSize, unsigned char* DecompressData)
 {
 	//ランレングスで展開
-	unsigned char byte;
-	unsigned char count;
-	unsigned int current, decompressSize;
+	unsigned int i = 0;
+	unsigned int out = 0;
 
-	current = 0;
-	decompressSize = 0;
-
-	while (current < CompressSize)
+	while (i < CompressSize)
 	{
-		byte = CompressData[current];
-		current++;
-		count = CompressData[current];
-		current++;
+		unsigned char type = CompressData[i++];
 
-		for (unsigned int i = 0; i < count + 1; i++)
+		if (type == 1)
 		{
-			DecompressData[decompressSize] = byte;
-			decompressSize++;
+			// RLE
+			unsigned char byte = CompressData[i++];
+			unsigned char count = CompressData[i++];
+
+			for (int j = 0; j < count; j++)
+				DecompressData[out++] = byte;
+		}
+		else
+		{
+			// RAW
+			unsigned char count = CompressData[i++];
+
+			for (int j = 0; j < count; j++)
+				DecompressData[out++] = CompressData[i++];
 		}
 	}
 
-	return decompressSize;
+	return out;
 }
