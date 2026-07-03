@@ -1,3 +1,3 @@
 ﻿  SampleRLE.cpp
-C:\Users\kaizu\Documents\GitHub\HAL_Tasks\GI41\Gl41\Gl41\SampleRLE.cpp(205,30): warning C4018: '<': signed と unsigned の数値を比較しようとしました。
+C:\Users\kaizu\Documents\GitHub\HAL_Tasks\GI41\Gl41\Gl41\SampleRLE.cpp(217,30): warning C4018: '<': signed と unsigned の数値を比較しようとしました。
   Gl41.vcxproj -> C:\Users\kaizu\Documents\GitHub\HAL_Tasks\GI41\Gl41\x64\Debug\Gl41.exe

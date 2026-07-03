@@ -1,6 +1,8 @@
 #define _CRT_SECURE_NO_WARNINGS
+
 #include <stdio.h>
 #include <string.h>
+
 
 void Compress(const char* FileName, FILE* CompressFile);
 void Decompress(FILE* CompressFile);
@@ -8,10 +10,9 @@ void Decompress(FILE* CompressFile);
 unsigned int Encode(unsigned char* OriginalData, unsigned int OriginalSize, unsigned char* CompressData);
 unsigned int Decode(unsigned char* CompressData, unsigned int CompressSize, unsigned char* DecompressData);
 
-/// <summary>
-/// 
-/// </summary>
-/// <returns></returns>
+
+
+
 int main()
 {
 	printf("1:圧縮　2:展開\n");
@@ -24,7 +25,7 @@ int main()
 		//圧縮
 
 		FILE* compressfile;
-		compressfile = fopen("data/compress.dat", "wb");
+		compressfile = fopen("compress.dat", "wb");
 
 		Compress("data/explosion.wav", compressfile);
 		Compress("data/hal.bmp", compressfile);
@@ -44,17 +45,26 @@ int main()
 		Decompress(compressfile);
 
 		fclose(compressfile);
+
+		// 展開が終わったら圧縮ファイルを削除する
+		if (remove("compress.dat") == 0)
+		{
+			printf("compress.dat を削除しました。\n");
+		}
+		else
+		{
+			printf("compress.dat を削除できませんでした。\n");
+		}
 	}
 
 
 	return 0;
 }
 
-/// <summary>
-/// 
-/// </summary>
-/// <param name="FileName"></param>
-/// <param name="CompressFile"></param>
+
+
+
+
 void Compress(const char* FileName, FILE* CompressFile)
 {
 	FILE* file = fopen(FileName, "rb");
@@ -85,12 +95,21 @@ void Compress(const char* FileName, FILE* CompressFile)
 
 	delete[] originalData;
 	delete[] compressData;
+
+	// 圧縮後、元データを削除する
+	if (remove(FileName) == 0)
+	{
+		printf("%s を削除しました。\n", FileName);
+	}
+	else
+	{
+		printf("%s を削除できませんでした。\n", FileName);
+	}
 }
 
-/// <summary>
-/// 
-/// </summary>
-/// <param name="CompressFile"></param>
+
+
+
 void Decompress(FILE* CompressFile)
 {
 
@@ -131,13 +150,9 @@ void Decompress(FILE* CompressFile)
 	}
 }
 
-/// <summary>
-/// 
-/// </summary>
-/// <param name="OriginalData"></param>
-/// <param name="OriginalSize"></param>
-/// <param name="CompressData"></param>
-/// <returns></returns>
+
+
+
 unsigned int Encode(unsigned char* OriginalData, unsigned int OriginalSize, unsigned char* CompressData)
 {
 	//ランレングスで圧縮
@@ -178,13 +193,10 @@ unsigned int Encode(unsigned char* OriginalData, unsigned int OriginalSize, unsi
 	return compressSize;
 }
 
-/// <summary>
-/// 
-/// </summary>
-/// <param name="CompressData"></param>
-/// <param name="CompressSize"></param>
-/// <param name="DecompressData"></param>
-/// <returns></returns>
+
+
+
+
 unsigned int Decode(unsigned char* CompressData, unsigned int CompressSize, unsigned char* DecompressData)
 {
 	//ランレングスで展開

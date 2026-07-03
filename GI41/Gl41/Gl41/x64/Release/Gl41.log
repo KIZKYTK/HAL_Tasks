@@ -1,0 +1,8 @@
+﻿  SampleRLE.cpp
+C:\Users\kaizu\Documents\GitHub\HAL_Tasks\GI41\Gl41\Gl41\SampleRLE.cpp(226,30): warning C4018: '<': signed と unsigned の数値を比較しようとしました。
+  コード生成しています。
+  2 of 15 functions (13.3%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  コード生成が終了しました。
+  Gl41.vcxproj -> C:\Users\kaizu\Documents\GitHub\HAL_Tasks\GI41\Gl41\x64\Release\Gl41.exe
